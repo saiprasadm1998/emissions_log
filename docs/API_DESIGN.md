@@ -1,7 +1,8 @@
 # API Design — Route / Role Matrix
 
 Maps every route directly to a row in the Section 8 authorisation matrix.
-Enforced server-side on every route (TC-01)
+Enforced server-side on every route (TC-01) — never assumed from hidden
+UI elements.
 
 | Capability (Section 8) | Route | Roles allowed | Extra condition |
 |---|---|---|---|
@@ -19,5 +20,9 @@ Enforced server-side on every route (TC-01)
 ## Why two routes have no implementation, rather than a permission check that always fails
 
 "Reopen a month" and "delete permanently" are both marked **Denied** for
-every role in Section 8 — no role can do them. The code path doesn't
+every role in Section 8 — no role can ever do them. Implementing them as
+routes that check role and always return 403 would still leave an attack
+surface (a bug in the check could accidentally allow it) and misrepresents
+the requirement, which is that the *capability itself* shouldn't exist,
+not that it should be gated. Simplest and safest: the code path doesn't
 exist.

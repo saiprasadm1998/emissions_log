@@ -2,7 +2,8 @@
 
 Schema is delivered as ordered SQL migrations in `db/` (`000_extensions.sql`
 through `008_audit_log.sql`), run via `npm run migrate`. This document
-explains the key decisions.
+explains the key decisions; for exact column definitions and constraints,
+read the migration files themselves.
 
 ## Tables
 
@@ -45,7 +46,7 @@ explains the key decisions.
 - An `EXCLUDE USING gist (factor_code WITH =, daterange(valid_from,
   valid_to, '[]') WITH &&)` constraint makes it **impossible at the
   database level** to insert two overlapping validity periods for the
-  same stream — enforced atomically.
+  same stream — enforced atomically, not by application logic.
 - Superseding a factor never edits an existing row — it closes the
   current open period's `valid_to` and inserts a new row. Every
   historical calculation keeps pointing at the exact row it used.
@@ -94,4 +95,4 @@ single column, because a row can fail more than one rule simultaneously.
   produced `862.647` instead of the correct `862.648` on the FVE-00127
   worked example, because `2.05`/`2.13` aren't exactly representable in
   binary floating point. Rounding to 3dp happens only at
-  presentation/export, never on stored or intermediate values as per requirements.
+  presentation/export, never on stored or intermediate values.
