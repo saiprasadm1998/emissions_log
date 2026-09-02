@@ -1,0 +1,21 @@
+{
+  "name": "flare-vent-emissions-log",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "migrate": "tsx scripts/migrate.ts",
+    "seed": "tsx scripts/seed.ts"
+  },
+  "dependencies": {
+    "pg": "^8.11.5",
+    "csv-parse": "^5.5.6",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.5",
+    "@types/pg": "^8.11.6",
+    "@types/node": "^20.12.7"
+  }
+}
