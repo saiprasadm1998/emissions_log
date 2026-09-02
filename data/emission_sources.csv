@@ -1,0 +1,8 @@
+source_code,source_name,source_type,process_unit,area,status
+FL-1001,HP Flare Stack,FLARE,Unit 100 - Gas Processing,Process Area A,ACTIVE
+FL-1002,LP Flare Stack,FLARE,Unit 200 - Stabilisation,Process Area A,ACTIVE
+FL-1003,Acid Gas Flare,FLARE,Unit 400 - Sweetening,Process Area B,ACTIVE
+VT-2001,Crude Storage Tank Vent,VENT,Tank Farm,Storage,ACTIVE
+VT-2002,Compressor Dry Seal Vent,VENT,Unit 300 - Compression,Process Area B,ACTIVE
+VT-2003,Unit 100 Blowdown Vent,VENT,Unit 100 - Gas Processing,Process Area A,ACTIVE
+VT-2004,Glycol Regenerator Still Vent,VENT,Unit 200 - Stabilisation,Process Area A,DECOMMISSIONED

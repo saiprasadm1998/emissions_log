@@ -1,0 +1,9 @@
+factor_code,stream,factor_value,factor_unit,valid_from,valid_to,basis
+EF-FLR-ASSOC,Flared associated gas,2.0500,tCO2e/kSm3,2024-01-01,2024-12-31,IPCC 2006 Vol.2 Ch.4 default; 98% combustion efficiency; GWP basis AR4
+EF-FLR-ASSOC,Flared associated gas,2.1300,tCO2e/kSm3,2025-01-01,,Revised gas composition survey 2024-Q4; 98% combustion efficiency; GWP basis AR5
+EF-FLR-ACID,Flared acid gas,1.8700,tCO2e/kSm3,2024-01-01,2024-12-31,Site-specific composition; GWP basis AR4
+EF-FLR-ACID,Flared acid gas,1.9100,tCO2e/kSm3,2025-01-01,,Site-specific composition; GWP basis AR5
+EF-VNT-NATGAS,Vented natural gas,15.2500,tCO2e/kSm3,2024-01-01,2024-12-31,90% mol CH4; GWP100 = 25 (IPCC AR4)
+EF-VNT-NATGAS,Vented natural gas,17.0800,tCO2e/kSm3,2025-01-01,,90% mol CH4; GWP100 = 28 (IPCC AR5)
+EF-VNT-TANK,Vented tank vapour,9.4000,tCO2e/kSm3,2024-01-01,2024-12-31,Tank vapour composition survey 2023; GWP basis AR4
+EF-VNT-TANK,Vented tank vapour,10.5200,tCO2e/kSm3,2025-01-01,,Tank vapour composition survey 2023; GWP basis AR5
