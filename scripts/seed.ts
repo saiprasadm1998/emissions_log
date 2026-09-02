@@ -12,6 +12,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse } from "csv-parse/sync";
 import pg from "pg";
+import { validateEvent } from "../lib/validation.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dataDir = join(__dirname, "..", "data");
@@ -93,24 +94,9 @@ async function main() {
   let rejected = 0;
 
   for (const e of rawEvents) {
-    const reasons: string[] = [];
-
-    // VR-01
-    if (!e.end_datetime || new Date(e.end_datetime) <= new Date(e.start_datetime)) {
-      reasons.push("END_NOT_AFTER_START");
-    }
-    // VR-02
-    if (e.reported_volume === "" || e.reported_volume === undefined) {
-      reasons.push("VOLUME_MISSING");
-    }
-    // VR-03
-    if (refCounts[e.event_ref] > 1) {
-      reasons.push("DUPLICATE_REF");
-    }
-    // VR-04
-    if (sourceStatus[e.source_code] !== "ACTIVE") {
-      reasons.push("SOURCE_NOT_ACTIVE");
-    }
+    // Same VR-01 to VR-04 logic the live API route uses (lib/validation.ts)
+    // -- one source of truth, not two copies that can drift apart.
+    const reasons = validateEvent(e, { refCounts, sourceStatus });
 
     const isAccepted = reasons.length === 0;
     isAccepted ? accepted++ : rejected++;
