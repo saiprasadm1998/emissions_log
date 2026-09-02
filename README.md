@@ -9,7 +9,7 @@ reporting on the results — per LA-ASM-WEB-001 Rev 0.
 ## Stack
 - PostgreSQL (schema in `db/`, raw SQL migrations)
 - Node.js + TypeScript (seed and calculation scripts in `scripts/`)
-- Next.js (API + UI in progress)
+- Next.js (API + UI — in progress)
 
 ## Setup
 
@@ -18,7 +18,8 @@ reporting on the results — per LA-ASM-WEB-001 Rev 0.
    npm install
    ```
 
-2. Create a Postgres database and set `DATABASE_URL` in a `.env` file:
+2. Create a Postgres database and set `DATABASE_URL` in a `.env` file
+   (not committed — see `.env.example` for the format):
    ```
    DATABASE_URL=postgresql://<user>:<password>@localhost:5432/emissions_log
    ```
@@ -42,7 +43,7 @@ reporting on the results — per LA-ASM-WEB-001 Rev 0.
    npm run calculate
    ```
    Expected output includes `FVE-00127 total CO2e: 862.648 tCO2e`,
-   matching the worked example exactly.
+   matching the brief's worked example exactly.
 
 ## Documentation
 - `docs/DATA_MODEL.md` — schema design and the reasoning behind each
