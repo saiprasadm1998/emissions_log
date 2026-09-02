@@ -45,7 +45,27 @@ reporting on the results — per LA-ASM-WEB-001 Rev 0.
    Expected output includes `FVE-00127 total CO2e: 862.648 tCO2e`,
    matching the brief's worked example exactly.
 
-## Documentation
+## Technology choices and justification (TC-01, TC-02)
+
+- **API implemented as Next.js Route Handlers**, not a separate
+  Express/Fastify service. Given the scope (one frontend, one API, no
+  separate deployment target for either), a single Next.js project
+  avoids running two servers and two deploy pipelines for no added
+  benefit — Route Handlers give the same request/response model with
+  less infrastructure. A separate service would be justified if the API
+  needed to be consumed by something other than this UI, which isn't
+  the case here.
+- **Client vs server components**: pages that only display data (the
+  register, the dashboard) are server components by default — they
+  fetch and render on the server, which keeps the database query logic
+  off the client entirely and avoids shipping DB-adjacent code to the
+  browser. Anything with interactivity (the event entry form, sorting
+  controls) is marked `"use client"` explicitly, and only that specific
+  component — not its parent page — so as little JavaScript as possible
+  ships to the browser. Each client component's directive is
+  accompanied by a one-line comment stating why it needs to be one
+  (state, event handlers, or browser-only APIs).
+
 - `docs/DATA_MODEL.md` — schema design and the reasoning behind each
   table's key structure and constraints.
 - `docs/ASSUMPTIONS.md` — judgment calls made where the brief was silent
