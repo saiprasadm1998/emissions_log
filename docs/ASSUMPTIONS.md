@@ -10,6 +10,36 @@ Recorded as decisions were made.
 - **`month_closures` has no status column**. A row's existence means
   the month is closed leaving no way to "un-close" schema (FR-08). If 
   reopening is ever needed, it can only be done via a manual DB procedure.
+  **FR-08 also explicitly requires documenting on how to reopen a month if 
+  operationally necessary**:
+
+  1. The business reason must be documented outside the system first
+     (a change ticket or equivalent). Reopening a closed month is
+     never routine so a reason has to exist before anyone
+     touches the database directly.
+  2. Approval for the reopening itself must come from someone with
+     authority over the closed period, obtained *outside* the application 
+     since no role inside the app is permitted to authorise this by design.
+  3. A person with direct production database access shall remove the lock 
+     with a single, precise statement identifying the exact period:
+     ```sql
+     DELETE FROM month_closures WHERE period_month = 'YYYY-MM-01';
+     ```
+     This only removes the *lock*. It does not touch any event or
+     segment data. Once removed, events in that period become
+     editable again through the normal application flow (create,
+     amend, void), with all of VR-01 to VR-04 and the calculation engine
+     applying exactly as they would to any other open period.
+  4. Because this action happens outside the application, it is not
+     automatically captured by the in-app audit mechanism. The person
+     performing it should record the action manually.
+  5. Once the necessary correction is made, the month should be
+     re-closed through the *normal* application flow
+     (`POST /api/month-closures`) restoring the lock through the
+     same controlled path every other closure goes through.
+
+  The procedure is deliberately manual and outside the application at
+  every step as per FR-08.
 - **`audit_log.entity_type`/`entity_id` are not foreign keys**. They
   reference different tables depending on the action, so a normal FK
   isn't possible. Integrity here relies on application logic writing
