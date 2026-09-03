@@ -37,6 +37,10 @@ export const supersedeFactorSchema = z.object({
   basis: z.string().nullable().optional(),
 });
 
+export const closeMonthSchema = z.object({
+  period_month: z.string().date(), // YYYY-MM-01
+});
+
 // Consistent structured error shape (NFR-01) for any route's validation
 // failure -- same format everywhere, not a different error shape per route.
 export function validationErrorResponse(error: z.ZodError) {
