@@ -2,14 +2,13 @@
 
 ## What this is
 A system for recording flare/vent emission events, validating them,
-calculating CO2e against time-versioned emission factors (correctly
-apportioned across calendar-month and factor-validity boundaries), and
+calculating CO2e against time-versioned emission factors and
 reporting on the results as per LA-ASM-WEB-001 Rev 0.
 
 ## Stack
 - PostgreSQL (schema in `db/`, raw SQL migrations)
 - Node.js + TypeScript (seed and calculation scripts in `scripts/`)
-- Next.js (API + UI)
+- Next.js App Router (API routes + UI, server components by default)
 
 ## Setup
 
@@ -18,10 +17,11 @@ reporting on the results as per LA-ASM-WEB-001 Rev 0.
    npm install
    ```
 
-2. Create a Postgres database and set `DATABASE_URL` in a `.env` file
-   (.env file not committed, refer `.env.example` for the format):
+2. Create a Postgres database and set `DATABASE_URL` and `JWT_SECRET`
+   in a `.env` file (not committed so refer `.env.example` for the format):
    ```
    DATABASE_URL=postgresql://<user>:<password>@localhost:5432/emissions_log
+   JWT_SECRET=<any random string>
    ```
 
 3. Run the migrations (creates all tables, in dependency order):
@@ -45,29 +45,51 @@ reporting on the results as per LA-ASM-WEB-001 Rev 0.
    Expected output includes `FVE-00127 total CO2e: 862.648 tCO2e`,
    matching the brief's worked example exactly.
 
-## Technology choices and justification (TC-01, TC-02)
+6. Create the three demo users (one per role). Refer
+   `docs/SEED_CREDENTIALS.md` for the exact steps and credentials.
 
-- **API implemented as Next.js Route Handlers**, not a separate
-  Express/Fastify service. Given the scope (one frontend, one API, no
-  separate deployment target for either), a single Next.js project
-  avoids running two servers and two deploy pipelines for no added
-  benefit. Route Handlers give the same request/response model with
-  less infrastructure. A separate service would be justified if the API
-  needed to be consumed by something other than this UI.
-- **Client vs server components**: pages that only display data (the
-  register, the dashboard) are server components by default. They
-  fetch and render on the server, which keeps the database query logic
-  off the client entirely and avoids shipping DB-adjacent code to the
-  browser. Anything with interactivity (the event entry form, sorting
-  controls) is marked `"use client"` explicitly. Each client component's 
-  directive is accompanied by a one-line comment stating why it needs to 
-  be one (state, event handlers, or browser-only APIs).
+7. Build check (also run this before submitting since `npm run dev` does
+   not run full type-checking, so this is the only way to be sure the
+   whole app actually compiles clean):
+   ```bash
+   npm run build
+   ```
 
+8. Start the app:
+   ```bash
+   npm run dev
+   ```
+   Visit `http://localhost:3000` — you'll be redirected to `/login`.
+
+## Documentation
 - `docs/DATA_MODEL.md` — schema design and the reasoning behind each
   table's key structure and constraints.
-- `docs/ASSUMPTIONS.md` — judgment calls made where the brief was ambiguous and why.
+- `docs/API_DESIGN.md` — every route mapped to the Section 8
+  authorisation matrix.
+- `docs/ASSUMPTIONS.md` — judgment calls made where the brief was
+  silent or ambiguous, bugs found and fixed during testing, and current
+  scope status.
+- `docs/SEED_CREDENTIALS.md` — the three demo user credentials.
+- `docs/COMPONENT_BOUNDARY.md` — server vs client component reasoning
+  (TC-01).
 
 ## Status
-Data model, migrations, seed, and calculation engine are complete and
-verified. API and UI (M requirements) are complete. Refer `docs/ASSUMPTIONS.md` for
-current scope decisions.
+
+**All M-priority requirements are complete and independently verified**
+— data model, migrations, seed script with VR-01to VR-04 validation,
+calculation engine (verified against the FVE-00127 worked example and
+the 128/8 accept-reject figure), full API with server-side RBAC on
+every route, and a complete UI (dashboard, event register with
+filtering, entry/amend/void forms, source and factor registers,
+month-close). Every piece was tested through real requests and a real
+browser.
+
+**D-priority progress:**
+- Done and verified: FR-11 (factor supersession UI), FR-12 (exception
+  register — a filter on the existing register view, not a separate
+  page), FR-14 (monthly CSV export).
+- Deliberately omitted: FR-15 (audit trail write-side) and FR-13 (bulk
+  import) — see `docs/ASSUMPTIONS.md` for the reasoning behind each.
+
+Refer `docs/ASSUMPTIONS.md` for the full reasoning behind every decision
+above.
