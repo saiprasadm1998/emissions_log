@@ -1,10 +1,11 @@
 "use client";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 const links = [
   { href: "/", label: "Dashboard" },
   { href: "/register", label: "Register" },
+  { href: "/register?status=rejected", label: "Exceptions" },
   { href: "/sources", label: "Sources" },
   { href: "/factors", label: "Factors" },
   { href: "/register/new", label: "New entry" },
@@ -14,6 +15,8 @@ const approverLinks = [{ href: "/month-close", label: "Close month" }];
 
 export default function Nav({ username, role }: { username: string | null; role: string | null }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentUrl = searchParams.toString() ? `${pathname}?${searchParams.toString()}` : pathname;
 
   async function handleLogout() {
     await fetch("/api/logout", { method: "POST" });
@@ -51,7 +54,7 @@ export default function Nav({ username, role }: { username: string | null; role:
         </span>
         {username &&
           [...links, ...(role === "APPROVER" ? approverLinks : [])].map((link) => {
-            const active = pathname === link.href;
+            const active = currentUrl === link.href;
             return (
               <Link
                 key={link.href}

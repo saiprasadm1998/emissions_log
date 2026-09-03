@@ -26,9 +26,9 @@ function StatusBadge({ event }: { event: { is_accepted: boolean; is_voided: bool
 export default async function RegisterPage({
   searchParams,
 }: {
-  searchParams: Promise<{ source_code?: string; from?: string; to?: string }>;
+  searchParams: Promise<{ source_code?: string; from?: string; to?: string; status?: "accepted" | "rejected" | "voided" }>;
 }) {
-  const { source_code, from, to } = await searchParams;
+  const { source_code, from, to, status } = await searchParams;
 
   const user = await getSessionUser();
   if (!user) redirect("/login");
@@ -38,7 +38,7 @@ export default async function RegisterPage({
   let events, sources;
   try {
     [events, sources] = await Promise.all([
-      getEvents({ sourceCode: source_code, from, to }),
+      getEvents({ sourceCode: source_code, from, to, status }),
       getSources(),
     ]);
   } catch (err) {
@@ -52,7 +52,7 @@ export default async function RegisterPage({
     );
   }
 
-  const hasFilter = Boolean(source_code || from || to);
+  const hasFilter = Boolean(source_code || from || to || status);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -91,6 +91,17 @@ export default async function RegisterPage({
             To
           </label>
           <input type="date" name="to" defaultValue={to?.slice(0, 10) ?? ""} />
+        </div>
+        <div>
+          <label style={{ display: "block", fontSize: 11, color: "var(--text-muted)", marginBottom: 4 }}>
+            Status
+          </label>
+          <select name="status" defaultValue={status ?? ""}>
+            <option value="">All</option>
+            <option value="rejected">Rejected (exceptions)</option>
+            <option value="accepted">Accepted</option>
+            <option value="voided">Voided</option>
+          </select>
         </div>
         <button type="submit">Apply filter</button>
         {hasFilter && (
