@@ -16,6 +16,10 @@ export const createEventSchema = z.object({
 
 export type CreateEventInput = z.infer<typeof createEventSchema>;
 
+export const voidEventSchema = z.object({
+  void_reason: z.string().min(1, "A reason is required to void an event"),
+});
+
 // Consistent structured error shape (NFR-01) for any route's validation
 // failure -- same format everywhere, not a different error shape per route.
 export function validationErrorResponse(error: z.ZodError) {
