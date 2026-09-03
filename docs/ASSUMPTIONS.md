@@ -45,3 +45,13 @@ Recorded as decisions were made, not reconstructed afterward.
 - Given the available time, API and UI are being attempted next, in
   that order, prioritising server-side RBAC correctness over UI polish.
   This log will be updated with what was and wasn't completed.
+- **Audit log write-side deliberately omitted.** FR-15 (audit trail) is
+  a D-priority requirement. `GET /api/audit-log` is implemented, and
+  the `audit_log` table exists in the schema, but no route currently
+  writes to it — every mutating route (create/amend/void event,
+  supersede factor, close month) would need an insert added. Given the
+  time available, prioritised finishing the M-priority routes (the
+  dashboard, in particular) over wiring up a D-priority feature's write
+  side. The read endpoint and schema are in place so this can be added
+  later without a redesign — each mutating route would need one
+  `INSERT INTO audit_log` call added.
