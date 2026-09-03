@@ -97,7 +97,12 @@ export default async function DashboardPage({
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h1 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>Emissions dashboard</h1>
-        {periodForm}
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          {periodForm}
+          <a href="/api/export" style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "none", border: "1px solid var(--border-strong)", borderRadius: 4, padding: "6px 12px" }}>
+            Export CSV
+          </a>
+        </div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: 16 }}>
