@@ -1,0 +1,209 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+
+:root {
+  /* Color -- grounded in the subject: flare = flame (amber), vent = vapor
+     (cyan). Dark control-room background, not a bright consumer dashboard. */
+  --bg: #14181d;
+  --surface: #1c2229;
+  --surface-raised: #232a32;
+  --border: #2a323c;
+  --border-strong: #384250;
+
+  --text: #e8eaed;
+  --text-muted: #8b95a1;
+  --text-faint: #5c6673;
+
+  --flare: #e8a33d;
+  --flare-dim: #4a3a22;
+  --vent: #4fb8c9;
+  --vent-dim: #22393e;
+
+  --accepted: #5fa875;
+  --accepted-dim: #24352a;
+  --rejected: #d9564b;
+  --rejected-dim: #3a2624;
+  --voided: #8b95a1;
+
+  --font-ui: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --radius-sm: 3px;
+  --radius-md: 5px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+/* Visible keyboard focus throughout -- accessibility floor. */
+:focus-visible {
+  outline: 2px solid var(--vent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Numeric readouts -- tabular figures, like an instrument display. Used
+   deliberately for data values (totals, table numbers, timestamps), not
+   as a general small-label typeface. */
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  margin: 0 0 12px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-faint);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-strong);
+}
+
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge-accepted {
+  background: var(--accepted-dim);
+  color: var(--accepted);
+}
+
+.badge-rejected {
+  background: var(--rejected-dim);
+  color: var(--rejected);
+}
+
+.badge-voided {
+  background: var(--border);
+  color: var(--voided);
+}
+
+.badge-flare {
+  background: var(--flare-dim);
+  color: var(--flare);
+}
+
+.badge-vent {
+  background: var(--vent-dim);
+  color: var(--vent);
+}
+
+input,
+select,
+button {
+  font-family: inherit;
+  font-size: 13px;
+}
+
+input,
+select {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--vent);
+}
+
+button {
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  font-weight: 600;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-raised);
+  color: var(--text);
+}
+
+button.primary {
+  background: var(--vent);
+  border-color: var(--vent);
+  color: #0c1518;
+}
+
+button:hover {
+  filter: brightness(1.1);
+}
+
+/* NFR-05: loading states, used by loading.tsx files. One deliberate,
+   quiet pulse -- not scattered animation per element. */
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.skeleton {
+  background: var(--surface-raised);
+  border-radius: var(--radius-sm);
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
