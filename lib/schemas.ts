@@ -20,6 +20,15 @@ export const voidEventSchema = z.object({
   void_reason: z.string().min(1, "A reason is required to void an event"),
 });
 
+export const createSourceSchema = z.object({
+  source_code: z.string().min(1),
+  source_name: z.string().min(1),
+  source_type: z.enum(["FLARE", "VENT"]),
+  process_unit: z.string().nullable().optional(),
+  area: z.string().nullable().optional(),
+  status: z.enum(["ACTIVE", "DECOMMISSIONED"]),
+});
+
 // Consistent structured error shape (NFR-01) for any route's validation
 // failure -- same format everywhere, not a different error shape per route.
 export function validationErrorResponse(error: z.ZodError) {
