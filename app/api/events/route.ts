@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { validateEvent } from "@/lib/validation";
+import { createEventSchema, validationErrorResponse } from "@/lib/schemas";
 import db from "@/lib/db";
 
 export async function POST(req: NextRequest) {
@@ -8,12 +9,13 @@ export async function POST(req: NextRequest) {
   const auth = requireRole(req, ["DATA_ENTRY", "APPROVER"]);
   if (!auth.ok) return auth.response;
 
-  const body = await req.json();
-  const { event_ref, source_code, start_datetime, end_datetime, reported_volume, volume_unit, cause, remarks } = body;
-
-  if (!event_ref || !source_code || !start_datetime) {
-    return Response.json({ error: "event_ref, source_code, start_datetime are required" }, { status: 400 });
+  const rawBody = await req.json();
+  const parsed = createEventSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    return validationErrorResponse(parsed.error);
   }
+  const { event_ref, source_code, start_datetime, end_datetime, reported_volume, volume_unit, cause, remarks } =
+    parsed.data;
 
   // Gate 2: period-closed check. An event's period is determined by its
   // start_datetime's calendar month (UTC -- see docs/ASSUMPTIONS.md).
