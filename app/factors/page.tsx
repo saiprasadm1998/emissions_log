@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/session";
 import { getFactors } from "@/lib/events";
@@ -47,7 +48,14 @@ export default async function FactorsPage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <h1 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>Emission factor register</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h1 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>Emission factor register</h1>
+        {user.role === "APPROVER" && (
+          <Link href="/factors/supersede">
+            <button className="primary">Supersede</button>
+          </Link>
+        )}
+      </div>
 
       {Array.from(byStream.entries()).map(([stream, rows]) => (
         <div key={stream} className="panel" style={{ padding: 0, overflow: "hidden" }}>
