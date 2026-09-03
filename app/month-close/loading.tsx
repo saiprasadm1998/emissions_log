@@ -1,0 +1,10 @@
+export default function Loading() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 560 }}>
+      <div className="skeleton" style={{ height: 28, width: 260 }} />
+      <div className="skeleton" style={{ height: 40, width: "100%" }} />
+      <div className="skeleton panel" style={{ height: 100 }} />
+      <div className="skeleton panel" style={{ height: 160 }} />
+    </div>
+  );
+}
