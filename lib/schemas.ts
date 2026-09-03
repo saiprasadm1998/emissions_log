@@ -29,6 +29,14 @@ export const createSourceSchema = z.object({
   status: z.enum(["ACTIVE", "DECOMMISSIONED"]),
 });
 
+export const supersedeFactorSchema = z.object({
+  factor_code: z.string().min(1),
+  factor_value: z.number(),
+  factor_unit: z.string().min(1),
+  valid_from: z.string().date(), // YYYY-MM-DD
+  basis: z.string().nullable().optional(),
+});
+
 // Consistent structured error shape (NFR-01) for any route's validation
 // failure -- same format everywhere, not a different error shape per route.
 export function validationErrorResponse(error: z.ZodError) {
