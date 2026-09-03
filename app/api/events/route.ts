@@ -4,6 +4,51 @@ import { validateEvent } from "@/lib/validation";
 import { createEventSchema, validationErrorResponse } from "@/lib/schemas";
 import db from "@/lib/db";
 
+// FR-03: server-side filtering by source and date range -- filtering
+// happens in the SQL WHERE clause, not by fetching everything and
+// filtering in JS (same principle as TC-05's aggregation rule).
+export async function GET(req: NextRequest) {
+  const auth = requireRole(req, ["DATA_ENTRY", "APPROVER", "AUDITOR"]);
+  if (!auth.ok) return auth.response;
+
+  const { searchParams } = new URL(req.url);
+  const sourceCode = searchParams.get("source_code");
+  const fromDate = searchParams.get("from");
+  const toDate = searchParams.get("to");
+
+  const conditions: string[] = [];
+  const values: string[] = [];
+
+  if (sourceCode) {
+    values.push(sourceCode);
+    conditions.push(`source_code = $${values.length}`);
+  }
+  if (fromDate) {
+    values.push(fromDate);
+    conditions.push(`start_datetime >= $${values.length}`);
+  }
+  if (toDate) {
+    values.push(toDate);
+    conditions.push(`start_datetime <= $${values.length}`);
+  }
+
+  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+  // Parameterised throughout (NFR-02) -- filter values are never
+  // string-concatenated into the query, they're always $1/$2/$3 placeholders.
+  const { rows } = await db.query(
+    `SELECT id, event_ref, source_code, start_datetime, end_datetime,
+            reported_volume, volume_unit, cause, recorded_by, remarks,
+            is_accepted, rejection_reasons, is_voided, void_reason
+     FROM emission_events
+     ${whereClause}
+     ORDER BY start_datetime DESC`,
+    values
+  );
+
+  return Response.json(rows);
+}
+
 export async function POST(req: NextRequest) {
   // Gate 1: role check.
   const auth = requireRole(req, ["DATA_ENTRY", "APPROVER"]);
