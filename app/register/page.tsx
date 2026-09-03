@@ -34,6 +34,8 @@ export default async function RegisterPage({
   if (!user) redirect("/login");
 
   const canAmend = user.role === "DATA_ENTRY" || user.role === "APPROVER";
+  const isApprover = user.role === "APPROVER";
+  const showActionsColumn = canAmend || isApprover;
 
   let events, sources;
   try {
@@ -128,7 +130,7 @@ export default async function RegisterPage({
                 <th style={{ textAlign: "right" }}>Volume</th>
                 <th>Status</th>
                 <th>Detail</th>
-                {canAmend && <th></th>}
+                {showActionsColumn && <th>Actions</th>}
               </tr>
             </thead>
             <tbody>
@@ -147,12 +149,21 @@ export default async function RegisterPage({
                   <td style={{ fontSize: 12, color: "var(--text-muted)" }}>
                     {e.is_voided ? e.void_reason : e.rejection_reasons.join(", ") || "\u2014"}
                   </td>
-                  {canAmend && (
+                  {showActionsColumn && (
                     <td>
                       {!e.is_voided && (
-                        <Link href={`/register/${e.id}/edit`} style={{ fontSize: 12, color: "var(--vent)" }}>
-                          Edit
-                        </Link>
+                        <div style={{ display: "flex", gap: 10 }}>
+                          {canAmend && (
+                            <Link href={`/register/${e.id}/edit`} style={{ fontSize: 12, color: "var(--vent)" }}>
+                              Edit
+                            </Link>
+                          )}
+                          {isApprover && (
+                            <Link href={`/register/${e.id}/void`} style={{ fontSize: 12, color: "var(--rejected)" }}>
+                              Void
+                            </Link>
+                          )}
+                        </div>
                       )}
                     </td>
                   )}
