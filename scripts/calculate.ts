@@ -18,6 +18,14 @@ import "dotenv/config";
 import pg from "pg";
 import Decimal from "decimal.js";
 
+// Same fix as lib/db.ts, applied independently -- this script runs in its
+// own process (via tsx), not through the Next.js app, so it needs its own
+// call to setTypeParser rather than inheriting the one in lib/db.ts.
+// Without this, factorRows.valid_from/valid_to (DATE columns) could parse
+// with a local-timezone/DST shift and corrupt the boundary comparisons in
+// findFactorForDate below on any server not running in UTC.
+pg.types.setTypeParser(1082, (val) => val);
+
 const MS_PER_HOUR = 1000 * 60 * 60;
 
 function toKsm3(volume: number, unit: string): number {

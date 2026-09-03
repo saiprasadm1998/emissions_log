@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
       await client.query("ROLLBACK");
       return Response.json(
         {
-          error: `New valid_from (${valid_from}) must be after the currently open period's start (${openRows[0].valid_from.toISOString().slice(0, 10)})`,
+          error: `New valid_from (${valid_from}) must be after the currently open period's start (${openRows[0].valid_from})`,
         },
         { status: 409 }
       );
@@ -78,6 +78,8 @@ export async function POST(req: NextRequest) {
        RETURNING id, factor_code, valid_from, valid_to, factor_value`,
       [factor_value, factor_unit, valid_from, basis ?? null, openRows[0].id]
     );
+
+  
 
     await client.query("COMMIT");
     return Response.json(newRows[0], { status: 201 });
