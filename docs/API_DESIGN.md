@@ -16,6 +16,8 @@ UI elements.
 | Reopen a closed month | *no route* | nobody | FR-08 — not exposed anywhere, not just permission-blocked |
 | View audit trail | `GET /api/audit-log` | Approver, Auditor | Data Entry denied |
 | Delete any record permanently | *no route* | nobody | same reasoning as reopen — no delete route exists at all |
+| View exception register (FR-12) | `GET /api/events?status=rejected` (also `/register?status=rejected` in the UI) | Data Entry, Approver, Auditor | same route as the general event register — a filter, not a separate resource |
+| Export monthly figures (FR-14) | `GET /api/export` | Data Entry, Approver, Auditor | — |
 
 ## Why two routes have no implementation, rather than a permission check that always fails
 
