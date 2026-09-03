@@ -20,7 +20,12 @@ export interface EventRow {
 // Shared by app/api/events/route.ts (GET) and app/register/page.tsx --
 // same reasoning as lib/dashboard.ts: the page is server-side code with
 // direct DB access, no need to fetch its own API.
-export async function getEvents(filters: { sourceCode?: string; from?: string; to?: string }): Promise<EventRow[]> {
+export async function getEvents(filters: {
+  sourceCode?: string;
+  from?: string;
+  to?: string;
+  status?: "accepted" | "rejected" | "voided";
+}): Promise<EventRow[]> {
   const conditions: string[] = [];
   const values: string[] = [];
 
@@ -35,6 +40,15 @@ export async function getEvents(filters: { sourceCode?: string; from?: string; t
   if (filters.to) {
     values.push(filters.to);
     conditions.push(`start_datetime <= $${values.length}`);
+  }
+  // FR-12: exception register is this same query, filtered to rejected
+  // records -- not a separate page or table.
+  if (filters.status === "accepted") {
+    conditions.push(`is_accepted = true AND is_voided = false`);
+  } else if (filters.status === "rejected") {
+    conditions.push(`is_accepted = false AND is_voided = false`);
+  } else if (filters.status === "voided") {
+    conditions.push(`is_voided = true`);
   }
 
   const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
