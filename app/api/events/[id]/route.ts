@@ -70,7 +70,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const sourceStatus = { [source_code]: sourceRows[0]?.status ?? "UNKNOWN" };
 
   const reasons = validateEvent(
-    { event_ref, source_code, start_datetime, end_datetime, reported_volume },
+    { event_ref, source_code, start_datetime, end_datetime: end_datetime ?? null, reported_volume: reported_volume ?? null },
     { refCounts, sourceStatus }
   );
 
